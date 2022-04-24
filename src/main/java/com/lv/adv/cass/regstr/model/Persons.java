@@ -16,19 +16,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @ToString
 @NoArgsConstructor
-
+@AllArgsConstructor
 @Entity
 @Table(name = "persons")
 public class Persons {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
     @Getter
-    private Long id;
+    @Setter
+    @GeneratedValue
+    private UUID id;
 
     @NotNull
     @Column(name = "fullname")

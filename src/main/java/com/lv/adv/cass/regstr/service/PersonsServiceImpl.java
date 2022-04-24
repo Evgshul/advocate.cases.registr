@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -56,13 +57,15 @@ public class PersonsServiceImpl implements PersonsService {
      * @param personId unique identifier of entry in entity persons
      */
     @Override
-    public void deletePerson(Long personId) {
-        if (!personsRepository.existsById(personId)) {
+    @Transactional
+    public void deletePerson(UUID personId) {
+        if (personsRepository.findById(personId).isPresent()) {
+            log.debug("person with id: {} found and will remove", personId);
+            personsRepository.deleteById(personId);
+        } else {
             log.debug("person with id: {} not found", personId);
-            throw new IllegalStateException("Person with id " + personId + "not find");
+            throw new IllegalStateException("Person with id " + personId + " not find");
         }
-        log.debug("person with id: {} found and will remove", personId);
-        personsRepository.deleteById(personId);
     }
 
     /**
@@ -75,7 +78,7 @@ public class PersonsServiceImpl implements PersonsService {
      */
     @Transactional
     @Override
-    public void updatePerson(final Long personId,
+    public void updatePerson(final UUID personId,
                              final String identifier,
                              final String fullName,
                              final String email,
@@ -94,13 +97,13 @@ public class PersonsServiceImpl implements PersonsService {
             existPerson.setIdentifier(identifier);
         }
         if (isNotEmpty(fullName) && !Objects.equals(existPerson.getFullName(), fullName)) {
-            existPerson.setIdentifier(fullName);
+            existPerson.setFullName(fullName);
         }
         if (isNotEmpty(email) && !Objects.equals(existPerson.getEmail(), email)) {
-            existPerson.setIdentifier(email);
+            existPerson.setEmail(email);
         }
         if (isNotEmpty(phone) && !Objects.equals(existPerson.getPhone(), phone)) {
-            existPerson.setIdentifier(phone);
+            existPerson.setPhone(phone);
         }
     }
 }

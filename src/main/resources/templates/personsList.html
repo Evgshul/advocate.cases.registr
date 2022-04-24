@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Persons</title>
+</head>
+<body>
+<div class="container my-2">
+    <h1> List of Persons</h1>
+    <a th:href = "@{/personsForm}" class="btn btn-primary btn-sm mb-3"> Add Person </a>
+    <table border="1" class="table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>Identifier</th>
+            <th>Full Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${listPersons}">
+            <td th:text="${p.identifier}"></td>
+            <td th:text="${p.fullName}"></td>
+            <td th:text="${p.phone}"></td>
+            <td th:text="${p.email}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

@@ -7,10 +7,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface PersonsRepository extends JpaRepository<Persons, Long> {
+public interface PersonsRepository extends JpaRepository<Persons, UUID> {
 
-    @Query("SELECT p FROM Persons p WHERE p.identifier = ?1")
-    Optional<Persons> findByIdentifier(String identifier);
+    @Query(value = "SELECT * FROM Persons WHERE identifier = :identifier",
+            nativeQuery = true)
+    Optional<Persons> findByIdentifier(@Param("identifier") String identifier);
 }
