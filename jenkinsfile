@@ -17,9 +17,9 @@ pipeline {
                   echo 'Testing'
               }
         }
-        stage('Test') {
+        stage('Release') {
               steps {
-                  echo 'Testing'
+                  echo 'Releasing'
               }
         }
     }
