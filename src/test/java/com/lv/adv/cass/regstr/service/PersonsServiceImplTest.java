@@ -32,8 +32,8 @@ class PersonsServiceImplTest {
 
     @Test
     void deletePerson() {
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
+        Persons person = createPerson();
+        UUID id = person.getId();
 
         when(personsRepository.findById(id)).thenReturn(Optional.of(person));
 
@@ -43,26 +43,33 @@ class PersonsServiceImplTest {
 
     @Test
     void updatePerson() {
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
+        Persons person = createPerson();
+        UUID id = person.getId();
 
         given(personsRepository.findById(id)).willReturn(Optional.of(person));
-        underTest.updatePerson(id, "ind123456", "Evgeny Shulgin", "evgeny@inbox.xx", "371 00022244888");
+        underTest.updatePerson(id,
+                "ind123456",
+                "Evgeny Shulgin",
+                "Short street",
+                "evgeny@inbox.xx",
+                "371 00022244888");
 
         Optional<Persons> optPerson = personsRepository.findById(id);
         assertThat(optPerson).isPresent().hasValueSatisfying(p -> {
             assertThat(p.getIdentifier()).isEqualTo("ind123456");
             assertThat(p.getFullName()).isEqualTo("Evgeny Shulgin");
+            assertThat(p.getAddress()).isEqualTo("Short street");
             assertThat(p.getEmail()).isEqualTo("evgeny@inbox.xx");
             assertThat(p.getPhone()).isEqualTo("371 00022244888");
         });
 
     }
 
-    private Persons createPerson(UUID id) {
-        return new Persons(id,
+    private Persons createPerson() {
+        return new Persons(
                 "Jack Dale",
                 "ind1",
+                "Wide street",
                 "+371 85469777",
                 "email@inbox.ll");
     }

@@ -15,6 +15,7 @@
         <tr>
             <th>Identifier</th>
             <th>Full Name</th>
+            <th>Address</th>
             <th>Phone</th>
             <th>Email</th>
         </tr>
@@ -23,6 +24,7 @@
         <tr th:each="p : ${listPersons}">
             <td th:text="${p.identifier}"></td>
             <td th:text="${p.fullName}"></td>
+            <td th:text="${p.address}"></td>
             <td th:text="${p.phone}"></td>
             <td th:text="${p.email}"></td>
         </tr>

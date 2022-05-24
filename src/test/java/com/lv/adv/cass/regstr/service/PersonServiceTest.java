@@ -2,23 +2,18 @@ package com.lv.adv.cass.regstr.service;
 
 import com.lv.adv.cass.regstr.model.Persons;
 import com.lv.adv.cass.regstr.repository.PersonsRepository;
-import com.lv.adv.cass.regstr.service.PersonsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,10 +37,10 @@ public class PersonServiceTest {
     @Test
     public void testCreateNewPerson() {
 
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
-        underTest.save(person);
-        Optional<Persons> optionalPerson = underTest.findById(id);
+        Persons person = createPerson();
+        personsService.addPerson(person);
+
+        Optional<Persons> optionalPerson = underTest.findByIdentifier(person.getIdentifier());
 
         assertThat(optionalPerson)
                 .isPresent().hasValueSatisfying(p -> {
@@ -55,15 +50,13 @@ public class PersonServiceTest {
 
     @Test
     public void testCreateNewPerson_identifierTheSame() {
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
+        Persons person = createPerson();
         underTest.save(person);
 
-        UUID idPerson1 = UUID.randomUUID();
         Persons persons1 = new Persons();
-        persons1.setId(idPerson1);
         persons1.setIdentifier("ind1");
         persons1.setFullName("Anda Jansone");
+        persons1.setAddress("any street");
         persons1.setEmail("bezmail@gmail.tr");
         persons1.setPhone("+375 5678911");
 
@@ -75,20 +68,19 @@ public class PersonServiceTest {
 
     @Test
     public void testDeletePerson_Success() {
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
+        Persons person = createPerson();
         underTest.save(person);
 
         assertThat(person).isNotNull();
 
+        UUID id = person.getId();
         personsService.deletePerson(id);
         assertTrue(underTest.findById(id).isEmpty());
     }
 
     @Test
     public void testDeletePerson_IdNotExist() {
-        UUID id = UUID.randomUUID();
-        Persons person = createPerson(id);
+        Persons person = createPerson();
         underTest.save(person);
 
         assertThat(person).isNotNull();
@@ -99,11 +91,11 @@ public class PersonServiceTest {
         assertTrue(exception.getMessage().contains("Person with id " + personId + " not find"));
     }
 
-
-    private Persons createPerson(UUID id) {
-        return new Persons(id,
+    private Persons createPerson() {
+        return new Persons(
                 "Jack Dale",
                 "ind1",
+                "Big deal avenue",
                 "+371 85469777",
                 "email@inbox.ll");
     }

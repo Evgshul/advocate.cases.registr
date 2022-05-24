@@ -20,6 +20,7 @@ public interface PersonsService {
     void updatePerson(final UUID personId,
                       final String identifier,
                       final String fullName,
+                      final String address,
                       final String email,
                       final String phone);
 }

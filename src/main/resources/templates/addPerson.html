@@ -13,6 +13,8 @@
     <form action="#" th:action="@{/savePerson}" th:object="${person}" method="POST">
         <input type="text" th:field="*{identifier}"
                placeholder="Person identifier" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{address}"
+               placeholder="Address" class="form-control mb-4 col-4">
         <input type="text" th:field="*{fullName}"
                placeholder="Full Name" class="form-control mb-4 col-4">
         <input type="text" th:field="*{phone}"

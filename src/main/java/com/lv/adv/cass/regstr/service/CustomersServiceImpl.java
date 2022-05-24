@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -43,7 +44,7 @@ public class CustomersServiceImpl implements CustomersService{
     }
 
     @Override
-    public void deleteCustomers(Long customerId) {
+    public void deleteCustomers(UUID customerId) {
         if (!customersRepository.existsById(customerId)) {
             throw new IllegalStateException("customer with id: " + customerId + "is not exist");
         }
@@ -53,7 +54,8 @@ public class CustomersServiceImpl implements CustomersService{
 
     @Transactional
     @Override
-    public void updateCustomers(Long customerId,
+    public void updateCustomers(UUID customerId,
+                                Persons persons,
                                 String identifier,
                                 String name,
                                 String declaredAddress,
@@ -64,6 +66,9 @@ public class CustomersServiceImpl implements CustomersService{
                 .orElseThrow(() -> new IllegalStateException(
                         "can not find customer with id: ".concat(customerId.toString())
                 ));
+        if (persons != null) {
+
+        }
 
         if (isNotEmpty(identifier) && !Objects.equals(existCustomer.getIdentifier(), identifier)) {
             existCustomer.setIdentifier(identifier);
@@ -76,11 +81,11 @@ public class CustomersServiceImpl implements CustomersService{
         }
         if (isNotEmpty(declaredAddress) && !Objects.equals(existCustomer.getDeclaredAddress(), declaredAddress)) {
             existCustomer.setDeclaredAddress(declaredAddress);
-            log.debug("customer declaredAdress changed from {} to {}", existCustomer.getDeclaredAddress(), declaredAddress);
+            log.debug("customer declaredAddress changed from {} to {}", existCustomer.getDeclaredAddress(), declaredAddress);
         }
         if (isNotEmpty(actualAddress) && !Objects.equals(existCustomer.getActualAddress(), actualAddress)) {
             existCustomer.setActualAddress(actualAddress);
-            log.debug("customer declaredAddress changed from {} to {}", existCustomer.getActualAddress(), actualAddress);
+            log.debug("customer actualAddress changed from {} to {}", existCustomer.getActualAddress(), actualAddress);
         }
         if (isNotEmpty(email) && !Objects.equals(existCustomer.getEmail(), email)) {
             existCustomer.setEmail(email);

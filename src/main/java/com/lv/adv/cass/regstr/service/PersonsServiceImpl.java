@@ -81,6 +81,7 @@ public class PersonsServiceImpl implements PersonsService {
     public void updatePerson(final UUID personId,
                              final String identifier,
                              final String fullName,
+                             final String address,
                              final String email,
                              final String phone
                              ) {
@@ -98,6 +99,9 @@ public class PersonsServiceImpl implements PersonsService {
         }
         if (isNotEmpty(fullName) && !Objects.equals(existPerson.getFullName(), fullName)) {
             existPerson.setFullName(fullName);
+        }
+        if (isNotEmpty(address) && !Objects.equals(existPerson.getAddress(), address)) {
+            existPerson.setAddress(address);
         }
         if (isNotEmpty(email) && !Objects.equals(existPerson.getEmail(), email)) {
             existPerson.setEmail(email);

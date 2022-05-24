@@ -19,16 +19,14 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "persons")
+@NoArgsConstructor
 public class Persons {
 
     @Id
     @Column(name = "person_id")
     @Getter
-    @Setter
     @GeneratedValue
     private UUID id;
 
@@ -41,9 +39,25 @@ public class Persons {
     @Getter@Setter
     private String identifier;
 
+    @NotNull
+    @Getter@Setter
+    private String address;
+
     @Getter@Setter
     private String phone;
 
     @Getter@Setter
     private String email;
+
+    public Persons(String fullName,
+                   String identifier,
+                   String address,
+                   String phone,
+                   String email) {
+        this.fullName = fullName;
+        this.identifier = identifier;
+        this.address = address;
+        this.phone = phone;
+        this.email = email;
+    }
 }

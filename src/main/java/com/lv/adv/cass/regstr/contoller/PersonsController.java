@@ -32,6 +32,5 @@ public class PersonsController {
     public String savePerson(@ModelAttribute("person") Persons person) {
         personsService.addPerson(person);
         return "redirect:/";
-
     }
 }
