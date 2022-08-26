@@ -1,5 +1,6 @@
 package com.lv.adv.cass.regstr.service;
 
+import com.lv.adv.cass.regstr.dto.PersonsDto;
 import com.lv.adv.cass.regstr.model.Persons;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.UUID;
 public interface PersonsService {
 
     // get list of all persons
-    List<Persons> getAllPersons();
+    List<PersonsDto> getPersons();
 
     // method to add new person
     void addPerson(Persons person);

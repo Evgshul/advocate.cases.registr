@@ -4,6 +4,7 @@ import com.lv.adv.cass.regstr.model.Persons;
 import com.lv.adv.cass.regstr.repository.PersonsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -27,11 +28,12 @@ public class PersonServiceTest {
 
     private PersonsServiceImpl personsService;
 
-//    private Persons persons;
+    private ModelMapper mapper;
 
+//    private Persons persons;
     @BeforeEach
     public void setup() {
-        personsService = new PersonsServiceImpl(underTest);
+        personsService = new PersonsServiceImpl(underTest, mapper);
     }
     
     @Test

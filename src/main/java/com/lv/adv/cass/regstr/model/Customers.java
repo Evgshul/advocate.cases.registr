@@ -3,16 +3,14 @@ package com.lv.adv.cass.regstr.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -21,7 +19,6 @@ import java.util.UUID;
 @Table(name = "customers")
 
 @NoArgsConstructor
-@ToString
 public class Customers {
 
     @Id
@@ -83,6 +80,20 @@ public class Customers {
         this.actualAddress = actualAddress;
         this.phone = phone;
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Customers{" +
+                "customerId=" + customerId +
+                ", person=" + person +
+                ", identifier='" + identifier + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", declaredAddress='" + declaredAddress + '\'' +
+                ", actualAddress='" + actualAddress + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
 

@@ -11,6 +11,8 @@ public class PersonsDto {
 
     private String identifier;
 
+    private String address;
+
     private String phone;
 
     private String email;

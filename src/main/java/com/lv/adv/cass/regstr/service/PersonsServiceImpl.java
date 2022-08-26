@@ -1,17 +1,22 @@
 package com.lv.adv.cass.regstr.service;
 
+import com.lv.adv.cass.regstr.dto.PersonsDto;
 import com.lv.adv.cass.regstr.model.Persons;
 import com.lv.adv.cass.regstr.repository.PersonsRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -24,9 +29,12 @@ public class PersonsServiceImpl implements PersonsService {
     private static final Logger log = LoggerFactory.getLogger(PersonsServiceImpl.class);
     private PersonsRepository personsRepository;
 
+    private ModelMapper mapper;
+
     @Autowired
-    public PersonsServiceImpl(PersonsRepository personsRepository) {
+    public PersonsServiceImpl(PersonsRepository personsRepository, ModelMapper mapper) {
         this.personsRepository = personsRepository;
+        this.mapper = mapper;
     }
 
     /**
@@ -34,8 +42,13 @@ public class PersonsServiceImpl implements PersonsService {
      * @return list of persons
      */
     @Override
-    public List<Persons> getAllPersons() {
-        return personsRepository.findAll();
+    public List<PersonsDto> getPersons() {
+        final List<Persons> persons = personsRepository.findAll();
+        List<PersonsDto> personsDtos = new ArrayList<>();
+        for (Persons p : persons) {
+            personsDtos.add(mapPersonsToPersonsDto(p));
+        }
+        return personsDtos;
     }
 
     /**
@@ -109,5 +122,14 @@ public class PersonsServiceImpl implements PersonsService {
         if (isNotEmpty(phone) && !Objects.equals(existPerson.getPhone(), phone)) {
             existPerson.setPhone(phone);
         }
+    }
+
+    /**
+     * Method helps mapping Persons entity fields values to PersonsDto fields values.
+     * @param person Person entity with fields values.
+     * @return personsDto entity with required values.
+     */
+    private PersonsDto mapPersonsToPersonsDto(final Persons person) {
+        return mapper.map(person, PersonsDto.class);
     }
 }
