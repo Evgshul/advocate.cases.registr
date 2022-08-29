@@ -101,5 +101,4 @@ public class PersonServiceTest {
                 "+371 85469777",
                 "email@inbox.ll");
     }
-
 }
