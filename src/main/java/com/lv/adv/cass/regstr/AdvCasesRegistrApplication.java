@@ -16,5 +16,4 @@ public class AdvCasesRegistrApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AdvCasesRegistrApplication.class, args);
 	}
-
 }
