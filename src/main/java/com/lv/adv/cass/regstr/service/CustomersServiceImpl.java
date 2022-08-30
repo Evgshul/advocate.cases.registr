@@ -20,10 +20,10 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class CustomersServiceImpl implements CustomersService{
 
     private static final Logger log = LoggerFactory.getLogger(CustomersServiceImpl.class);
-    private CustomersRepository customersRepository;
+    final private CustomersRepository customersRepository;
 
     @Autowired
-    public CustomersServiceImpl(CustomersRepository customersRepository) {
+    public CustomersServiceImpl(final CustomersRepository customersRepository) {
         this.customersRepository = customersRepository;
     }
 
@@ -66,9 +66,6 @@ public class CustomersServiceImpl implements CustomersService{
                 .orElseThrow(() -> new IllegalStateException(
                         "can not find customer with id: ".concat(customerId.toString())
                 ));
-        if (persons != null) {
-
-        }
 
         if (isNotEmpty(identifier) && !Objects.equals(existCustomer.getIdentifier(), identifier)) {
             existCustomer.setIdentifier(identifier);
