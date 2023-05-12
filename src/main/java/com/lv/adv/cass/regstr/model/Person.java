@@ -18,13 +18,13 @@ import java.util.UUID;
 
 @ToString
 @Entity
-@Table(name = "persons")
+@Table(name = "person")
 @NoArgsConstructor
-public class Persons {
+public class Person {
 
     @Id
     @Column(name = "person_id")
-    @Getter
+    @Getter@Setter
     @GeneratedValue
     private UUID id;
 
@@ -53,7 +53,7 @@ public class Persons {
     @Email(message = "wrong email")
     private String email;
 
-    public Persons(String fullName,
+    public Person(String fullName,
                    String identifier,
                    String address,
                    String phone,

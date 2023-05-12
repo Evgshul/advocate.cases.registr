@@ -1,8 +1,7 @@
 package com.lv.adv.cass.regstr.service;
 
-import com.lv.adv.cass.regstr.dto.CustomersDto;
 import com.lv.adv.cass.regstr.model.Customers;
-import com.lv.adv.cass.regstr.model.Persons;
+import com.lv.adv.cass.regstr.model.Person;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +12,7 @@ public interface CustomersService {
     void addCustomers(Customers customer);
     void deleteCustomers(UUID customerId);
     void updateCustomers(UUID id,
-                         Persons person,
+                         Person person,
                          String identifier,
                          String name,
                          String declaredAddress,
