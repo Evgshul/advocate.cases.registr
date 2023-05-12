@@ -1,7 +1,6 @@
 package com.lv.adv.cass.regstr.repository;
 
 import com.lv.adv.cass.regstr.model.Customers;
-import com.lv.adv.cass.regstr.model.Persons;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
 package com.lv.adv.cass.regstr.service;
 
 import com.lv.adv.cass.regstr.model.Customers;
-import com.lv.adv.cass.regstr.model.Persons;
+import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.CustomersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class CustomersServiceImpl implements CustomersService{
 
     private static final Logger log = LoggerFactory.getLogger(CustomersServiceImpl.class);
-    final private CustomersRepository customersRepository;
+    private final CustomersRepository customersRepository;
 
     @Autowired
     public CustomersServiceImpl(final CustomersRepository customersRepository) {
@@ -55,7 +55,7 @@ public class CustomersServiceImpl implements CustomersService{
     @Transactional
     @Override
     public void updateCustomers(UUID customerId,
-                                Persons persons,
+                                Person persons,
                                 String identifier,
                                 String name,
                                 String declaredAddress,
