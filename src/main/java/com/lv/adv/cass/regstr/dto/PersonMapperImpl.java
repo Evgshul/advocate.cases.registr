@@ -6,8 +6,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PersonMapperImpl implements PersonMapper {
@@ -42,9 +40,9 @@ public class PersonMapperImpl implements PersonMapper {
         return this.mapper.map(person, PersonDto.class);
     }
 
-    @Override
-    public List<PersonDto> getPersonsList() {
-        final List<Person> personList = this.personRepository.findAll();
-        return personList.stream().map(person -> mapper.map(person, PersonDto.class)).collect(Collectors.toList());
-    }
+//    @Override
+//    public List<PersonDto> getPersonsList() {
+//        final List<Person> personList = this.personRepository.findAll();
+//        return personList.stream().map(person -> mapper.map(person, PersonDto.class)).collect(Collectors.toList());
+//    }
 }

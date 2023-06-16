@@ -1,9 +1,9 @@
 package com.lv.adv.cass.regstr.contoller;
 
-import com.lv.adv.cass.regstr.dto.PersonsDto;
-import com.lv.adv.cass.regstr.model.Persons;
-import com.lv.adv.cass.regstr.repository.PersonsRepository;
-import com.lv.adv.cass.regstr.service.PersonsService;
+import com.lv.adv.cass.regstr.dto.PersonDto;
+import com.lv.adv.cass.regstr.model.Person;
+import com.lv.adv.cass.regstr.repository.PersonRepository;
+import com.lv.adv.cass.regstr.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,31 +17,30 @@ import javax.validation.Valid;
 
 import java.util.UUID;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Controller
 public class PersonsController {
 
     @Autowired
-    private PersonsService personsService;
+    private PersonService personsService;
 
-    private PersonsRepository personsRepository;
+    private PersonRepository personsRepository;
 
     @GetMapping("/")
     public String personsList(Model model) {
-        model.addAttribute("listPersons", personsService.getPersons());
+        model.addAttribute("listPersons", personsService.getAllPersons());
         return "person/personsList";
     }
 
     @GetMapping("/personsForm")
     public String addPerson(Model model) {
-        Persons persons = new Persons();
-        model.addAttribute("person", persons);
+        Person person = new Person();
+        model.addAttribute("person", person);
         return "person/addPerson";
     }
 
     @PostMapping("/savePerson")
-    public String savePerson(@ModelAttribute("person") @Valid Persons person, BindingResult result) {
+    public String savePerson(@ModelAttribute("person") @Valid PersonDto person, BindingResult result) {
         if (result.hasErrors()) {
             return "person/addPerson";
         } else {
@@ -52,7 +51,7 @@ public class PersonsController {
 
     @GetMapping("/person/edit/{id}")
     public String editPerson(@PathVariable("id") UUID id, Model model) {
-        Persons existedPerson = personsRepository.findById(id)
+        Person existedPerson = personsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("invalid " +
                         "user ID: " + id));
         model.addAttribute("person", existedPerson);
@@ -60,15 +59,9 @@ public class PersonsController {
     }
 
     @PostMapping("/person/update/{id}")
-    public String updatePerson(@PathVariable("id") UUID id, final PersonsDto personsNewValue) {
+    public Person updatePerson(@PathVariable("id") UUID id, final PersonDto personsNewValue) {
 
-        personsService.updatePerson(id,
-                personsNewValue.getIdentifier(),
-                personsNewValue.getFullName(),
-                personsNewValue.getAddress(),
-                personsNewValue.getEmail(),
-                personsNewValue.getPhone());
+        return personsService.updatePerson(id, personsNewValue);
 
-        return EMPTY;
     }
 }

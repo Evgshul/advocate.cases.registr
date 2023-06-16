@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -26,13 +27,13 @@ public class PersonsServiceImpl implements PersonService {
     private static final Logger LOG = LoggerFactory.getLogger(PersonsServiceImpl.class);
     private final PersonRepository personRepository;
 
-    private final PersonMapper personsMapper;
+    private final PersonMapper personMapper;
 
     @Autowired
     public PersonsServiceImpl(PersonRepository personRepository,
-                              PersonMapper personsMapper) {
+                              PersonMapper personMapper) {
         this.personRepository = personRepository;
-        this.personsMapper = personsMapper;
+        this.personMapper = personMapper;
     }
 
     /**
@@ -41,8 +42,9 @@ public class PersonsServiceImpl implements PersonService {
      * @return list of persons
      */
     @Override
-    public List<PersonDto> getPersons() {
-        return personsMapper.getPersonsList();
+    public List<PersonDto> getAllPersons() {
+        final List<Person> personList = this.personRepository.findAll();
+        return personList.stream().map(this.personMapper::personToPersonDto).collect(Collectors.toList());
     }
 
     /**
@@ -62,8 +64,12 @@ public class PersonsServiceImpl implements PersonService {
             throw new IllegalStateException("Email " + personsDto.getEmail() + " is taken");
         }
 
+        if (isPhoneBumberExist(personsDto.getPhone())) {
+            throw new IllegalStateException("Phone " + personsDto.getPhone() + " is taken");
+        }
+
         UUID id = UUID.randomUUID();
-        Person person = this.personsMapper.personDtoToPerson(personsDto);
+        Person person = this.personMapper.personDtoToPerson(personsDto);
         person.setId(id);
         LOG.debug("new person fullName {} and identifier {} was created", personsDto.getFullName(), personsDto.getIdentifier());
         return personRepository.save(person);
@@ -74,10 +80,32 @@ public class PersonsServiceImpl implements PersonService {
         LOG.debug("Searching for person fullName: {}", fullName);
         Optional<Person> personByFullName = personRepository.findByFullName(fullName);
         if (personByFullName.isEmpty()) {
-            throw new IllegalStateException("Fullname " + fullName + " is not present");
+            throw new IllegalStateException(String.format("Fullname %s is not present", fullName));
         } else {
             LOG.debug("Person {} found", fullName);
-            return personsMapper.personToPersonDto(personByFullName.get());
+            return personMapper.personToPersonDto(personByFullName.get());
+        }
+    }
+
+    @Override
+    public PersonDto findPersonByEmail(String email) {
+        Optional<Person> personByEmail = personRepository.findPersonsByEmail(email);
+        if (personByEmail.isEmpty()) {
+            throw new IllegalStateException("Email ".concat(email).concat(" is not present"));
+        } else {
+            LOG.debug("Person with email {} found", email);
+            return personMapper.personToPersonDto(personByEmail.get());
+        }
+    }
+
+    @Override
+    public PersonDto findPersonByPhone(String phone) {
+        Optional<Person> personByPhone = personRepository.findPersonsByPhone(phone);
+        if (personByPhone.isEmpty()) {
+            throw new IllegalStateException("Phone ".concat(phone).concat(" is not present"));
+        } else {
+            LOG.debug("Person with phone {} found", phone);
+            return personMapper.personToPersonDto(personByPhone.get());
         }
     }
 
@@ -94,7 +122,7 @@ public class PersonsServiceImpl implements PersonService {
             LOG.debug("person with id: {} found and removed", personId);
         } else {
             LOG.debug("person with id: {} not found", personId);
-            throw new IllegalStateException("Person with id " + personId + " not find");
+            throw new IllegalStateException("Person with ID " + personId + " not found");
         }
     }
 
@@ -118,26 +146,31 @@ public class PersonsServiceImpl implements PersonService {
                 throw new IllegalStateException("identifier ".concat(identifier).concat(" exist"));
             }
             existPerson.setIdentifier(identifier);
+            LOG.debug("Person identifier updated to {}", identifier);
         }
 
         final String fullName = personsDto.getFullName();
-        if (!Objects.equals(existPerson.getFullName(), fullName) && isFullnameExist(fullName)) {
+        if (!Objects.equals(existPerson.getFullName(), fullName) && !isFullnameExist(fullName)) {
             existPerson.setFullName(fullName);
+            LOG.debug("Person fullNmae updated to {}", fullName);
         }
 
         final String address = personsDto.getAddress();
         if (isNotEmpty(address) && !Objects.equals(existPerson.getAddress(), address)) {
+            LOG.debug("Person address updated to {}", address);
             existPerson.setAddress(address);
         }
 
         final String email = personsDto.getEmail();
-        if (!Objects.equals(existPerson.getEmail(), email) && isEmailExist(email)) {
+        if (!Objects.equals(existPerson.getEmail(), email) && !isEmailExist(email)) {
+            LOG.debug("Person email updated to {}", email);
             existPerson.setEmail(email);
         }
 
         final String phone = personsDto.getPhone();
         if (isNotEmpty(phone) && !Objects.equals(existPerson.getPhone(), phone)) {
             existPerson.setPhone(phone);
+            LOG.debug("Person phone updated to {}", phone);
         }
         return existPerson;
     }
@@ -152,5 +185,9 @@ public class PersonsServiceImpl implements PersonService {
 
     private boolean isEmailExist(String email) {
         return personRepository.findPersonsByEmail(email).isPresent();
+    }
+
+    private boolean isPhoneBumberExist(String phone) {
+        return personRepository.findPersonsByPhone(phone).isPresent();
     }
 }

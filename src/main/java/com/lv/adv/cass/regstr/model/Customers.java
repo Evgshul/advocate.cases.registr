@@ -31,7 +31,7 @@ public class Customers {
     @JoinColumn(name = "person_id", nullable = false)
     @Getter
     @Setter
-    private Persons person;
+    private Person person;
 
     @Column(name = "identifier")
     @NotNull(message = "identifier is required")
@@ -66,7 +66,7 @@ public class Customers {
     @Setter
     private String email;
 
-    public Customers(Persons person,
+    public Customers(Person person,
                      String identifier,
                      String customerName,
                      String declaredAddress,

@@ -9,13 +9,17 @@ import java.util.UUID;
 public interface PersonService {
 
     // get list of all persons
-    List<PersonDto> getPersons();
+    List<PersonDto> getAllPersons();
 
     // method to add new person
     Person addPerson(PersonDto personsDto);
 
     // method to find person by fullName
     PersonDto findPersonByFullName(String fullName);
+
+    PersonDto findPersonByEmail(String email);
+
+    PersonDto findPersonByPhone(String phone);
 
     // method to remove person
     void deletePerson(UUID personId);
