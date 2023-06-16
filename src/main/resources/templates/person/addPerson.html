@@ -16,21 +16,27 @@
     <h1>Add Person</h1>
     <br>
     <form action="#" th:action="@{/savePerson}" th:object="${person}" method="POST">
+        <p th:if="${#fields.hasErrors('identifier')}" th:errorclass="error" th:errors="*{identifier}" />
         <input type="text" th:field="*{identifier}"
                placeholder="Person identifier" class="form-control mb-4 col-4">
-        <p th:if="${#fields.hasErrors('identifier')}" th:errorclass="error" th:errors="*{identifier}" />
-        <input type="text" th:field="*{address}"
-               placeholder="Address" class="form-control mb-4 col-4">
-        <p th:if="${#fields.hasErrors('address')}" th:errorclass="error" th:errors="*{address}" />
+
+        <p th:if="${#fields.hasErrors('fullName')}" th:errorclass="error" th:errors="*{fullName}" />
         <input type="text" th:field="*{fullName}"
                placeholder="Full Name" class="form-control mb-4 col-4">
-        <p th:if="${#fields.hasErrors('fullName')}" th:errorclass="error" th:errors="*{fullName}" />
+
+        <p th:if="${#fields.hasErrors('address')}" th:errorclass="error" th:errors="*{address}" />
+        <input type="text" th:field="*{address}"
+               placeholder="Address" class="form-control mb-4 col-4">
+
+        <p th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}" />
         <input type="text" th:field="*{phone}"
                placeholder="Phone number" class="form-control mb-4 col-4">
-        <p th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}" />
+
+        <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
         <input type="text" th:field="*{email}"
                placeholder="Email" class="form-control mb-4 col-4">
-        <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
+
+
         <button type="submit" class="btn btn-info col-2">Add New Person</button>
         <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
     </form>
