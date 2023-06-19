@@ -1,6 +1,6 @@
 package com.lv.adv.cass.regstr.service;
 
-import com.lv.adv.cass.regstr.model.Customers;
+import com.lv.adv.cass.regstr.model.Customer;
 import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.CustomersRepository;
 import org.slf4j.Logger;
@@ -28,14 +28,14 @@ public class CustomersServiceImpl implements CustomersService{
     }
 
     @Override
-    public List<Customers> allCustomers() {
+    public List<Customer> allCustomers() {
         return customersRepository.findAll();
     }
 
     @Override
     @Transactional
-    public void addCustomers(Customers customer) {
-        Optional<Customers> customerByIdentifier = customersRepository.findByIdentifier(customer.getIdentifier());
+    public void addCustomers(Customer customer) {
+        Optional<Customer> customerByIdentifier = customersRepository.findByIdentifier(customer.getIdentifier());
         if (customerByIdentifier.isPresent()) {
             throw new IllegalStateException("customers exist");
         }
@@ -62,7 +62,7 @@ public class CustomersServiceImpl implements CustomersService{
                                 String actualAddress,
                                 String email,
                                 String phone) {
-        Customers existCustomer = customersRepository.findById(customerId)
+        Customer existCustomer = customersRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalStateException(
                         "can not find customer with id: ".concat(customerId.toString())
                 ));

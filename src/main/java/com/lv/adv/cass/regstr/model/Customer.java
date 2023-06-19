@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,13 +15,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "customer")
 
 @NoArgsConstructor
-public class Customers {
+public class Customer {
 
     @Id
     @GeneratedValue
@@ -27,11 +32,11 @@ public class Customers {
     @Column(name = "customer_id")
     private UUID customerId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "person_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_id", nullable = false)
     @Getter
     @Setter
-    private Person person;
+    private List<Person> persons;
 
     @Column(name = "identifier")
     @NotNull(message = "identifier is required")
@@ -66,34 +71,22 @@ public class Customers {
     @Setter
     private String email;
 
-    public Customers(Person person,
-                     String identifier,
-                     String customerName,
-                     String declaredAddress,
-                     String actualAddress,
-                     String phone,
-                     String email) {
-        this.person = person;
+    // add persons method.
+    public void addPerson(Person thePerson) {
+        if (persons == null) {
+            persons = new ArrayList<>();
+        }
+        persons.add(thePerson);
+    }
+
+    public Customer(List<Person> persons, String identifier, String customerName, String declaredAddress, String actualAddress, String phone, String email) {
+        this.persons = persons;
         this.identifier = identifier;
         this.customerName = customerName;
         this.declaredAddress = declaredAddress;
         this.actualAddress = actualAddress;
         this.phone = phone;
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "Customers{" +
-                "customerId=" + customerId +
-                ", person=" + person +
-                ", identifier='" + identifier + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", declaredAddress='" + declaredAddress + '\'' +
-                ", actualAddress='" + actualAddress + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }
 

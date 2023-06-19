@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CustomersDto {
+public class CustomerDto {
 
     private String identifier;
 
