@@ -68,10 +68,8 @@ public class PersonsServiceImpl implements PersonService {
             throw new IllegalStateException("Phone " + personsDto.getPhone() + " is taken");
         }
 
-        UUID id = UUID.randomUUID();
         Person person = this.personMapper.personDtoToPerson(personsDto);
-        person.setId(id);
-        LOG.debug("new person fullName {} and identifier {} was created", personsDto.getFullName(), personsDto.getIdentifier());
+//        LOG.debug("new person fullName {} and identifier {} was created", personsDto.getFullName(), personsDto.getIdentifier());
         return personRepository.save(person);
     }
 

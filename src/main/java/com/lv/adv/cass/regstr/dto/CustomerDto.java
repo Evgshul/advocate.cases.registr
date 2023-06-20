@@ -10,6 +10,8 @@ public class CustomerDto {
 
     private String identifier;
 
+    private PersonDto personDto;
+
     private String customerName;
 
     private String declaredAddress;

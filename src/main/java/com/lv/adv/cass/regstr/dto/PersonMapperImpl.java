@@ -1,7 +1,6 @@
 package com.lv.adv.cass.regstr.dto;
 
 import com.lv.adv.cass.regstr.model.Person;
-import com.lv.adv.cass.regstr.repository.PersonRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,13 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class PersonMapperImpl implements PersonMapper {
 
-    private final PersonRepository personRepository;
 
     private final ModelMapper mapper;
 
     @Autowired
-    public PersonMapperImpl(PersonRepository personRepository, ModelMapper mapper) {
-        this.personRepository = personRepository;
+    public PersonMapperImpl(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
@@ -39,10 +36,4 @@ public class PersonMapperImpl implements PersonMapper {
     public PersonDto personToPersonDto(Person person) {
         return this.mapper.map(person, PersonDto.class);
     }
-
-//    @Override
-//    public List<PersonDto> getPersonsList() {
-//        final List<Person> personList = this.personRepository.findAll();
-//        return personList.stream().map(person -> mapper.map(person, PersonDto.class)).collect(Collectors.toList());
-//    }
 }

@@ -17,7 +17,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -31,12 +30,6 @@ public class Customer {
     @Getter
     @Column(name = "customer_id")
     private UUID customerId;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "customer_id", nullable = false)
-    @Getter
-    @Setter
-    private List<Person> persons;
 
     @Column(name = "identifier")
     @NotNull(message = "identifier is required")
@@ -71,22 +64,29 @@ public class Customer {
     @Setter
     private String email;
 
-    // add persons method.
-    public void addPerson(Person thePerson) {
-        if (persons == null) {
-            persons = new ArrayList<>();
-        }
-        persons.add(thePerson);
-    }
 
-    public Customer(List<Person> persons, String identifier, String customerName, String declaredAddress, String actualAddress, String phone, String email) {
-        this.persons = persons;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "person_id", nullable = false)
+    @Getter
+    @Setter
+    private Person person;
+
+
+    public Customer(String identifier,
+                    String customerName,
+                    String declaredAddress,
+                    String actualAddress,
+                    String phone,
+                    String email,
+                    Person person) {
+
         this.identifier = identifier;
         this.customerName = customerName;
         this.declaredAddress = declaredAddress;
         this.actualAddress = actualAddress;
         this.phone = phone;
         this.email = email;
+        this.person = person;
     }
 }
 

@@ -1,7 +1,9 @@
 package com.lv.adv.cass.regstr.service;
 
+import com.lv.adv.cass.regstr.dto.CustomerDto;
+import com.lv.adv.cass.regstr.dto.CustomerMapper;
+import com.lv.adv.cass.regstr.dto.PersonDto;
 import com.lv.adv.cass.regstr.model.Customer;
-import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.CustomersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -20,31 +23,39 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class CustomersServiceImpl implements CustomersService{
 
     private static final Logger log = LoggerFactory.getLogger(CustomersServiceImpl.class);
+
     private final CustomersRepository customersRepository;
 
+    private final CustomerMapper customerMapper;
+
+
     @Autowired
-    public CustomersServiceImpl(final CustomersRepository customersRepository) {
+    public CustomersServiceImpl(final CustomersRepository customersRepository, CustomerMapper customerMapper) {
         this.customersRepository = customersRepository;
+        this.customerMapper = customerMapper;
     }
 
     @Override
-    public List<Customer> allCustomers() {
-        return customersRepository.findAll();
+    public List<CustomerDto> getAllCustomers() {
+        final List<Customer> customers = customersRepository.findAll();
+        return customers.stream().map(this.customerMapper::customerToCustomerDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public void addCustomers(Customer customer) {
-        Optional<Customer> customerByIdentifier = customersRepository.findByIdentifier(customer.getIdentifier());
+    public void addNewCustomer(CustomerDto customerDto) {
+        Optional<Customer> customerByIdentifier = customersRepository.findByIdentifier(customerDto.getIdentifier());
         if (customerByIdentifier.isPresent()) {
             throw new IllegalStateException("customers exist");
         }
+
+        Customer customer = customerMapper.customerDtoToCustomer(customerDto);
         customersRepository.save(customer);
-        log.debug("new customers name {}; identifier {}", customer.getCustomerName(), customer.getIdentifier());
+        log.debug("new customers name {}; identifier {}", customerDto.getCustomerName(), customerDto.getIdentifier());
     }
 
     @Override
-    public void deleteCustomers(UUID customerId) {
+    public void deleteCustomer(UUID customerId) {
         if (!customersRepository.existsById(customerId)) {
             throw new IllegalStateException("customer with id: " + customerId + "is not exist");
         }
@@ -54,43 +65,55 @@ public class CustomersServiceImpl implements CustomersService{
 
     @Transactional
     @Override
-    public void updateCustomers(UUID customerId,
-                                Person persons,
-                                String identifier,
-                                String name,
-                                String declaredAddress,
-                                String actualAddress,
-                                String email,
-                                String phone) {
+    public void updateCustomer(UUID customerId, CustomerDto customerDto) {
         Customer existCustomer = customersRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalStateException(
                         "can not find customer with id: ".concat(customerId.toString())
                 ));
 
-        if (isNotEmpty(identifier) && !Objects.equals(existCustomer.getIdentifier(), identifier)) {
-            existCustomer.setIdentifier(identifier);
-            log.debug("identifier changed from {} to {}", existCustomer.getIdentifier(), identifier);
+        final String customerIdentifier = customerDto.getIdentifier();
+        if (isNotEmpty(customerIdentifier) && !Objects.equals(existCustomer.getIdentifier(), customerIdentifier)) {
+            existCustomer.setIdentifier(customerIdentifier);
+            log.debug("identifier changed from {} to {}", existCustomer.getIdentifier(), customerIdentifier);
         }
 
-        if (isNotEmpty(name) && !Objects.equals(existCustomer.getCustomerName(), name)) {
-            existCustomer.setCustomerName(name);
-            log.debug("customer name changed from {} to {}", existCustomer.getCustomerName(), name);
+        final String customerName = customerDto.getCustomerName();
+        if (isNotEmpty(customerName) && !Objects.equals(existCustomer.getCustomerName(), customerName)) {
+            existCustomer.setCustomerName(customerName);
+            log.debug("customer name changed from {} to {}", existCustomer.getCustomerName(), customerName);
         }
+        final String declaredAddress = customerDto.getDeclaredAddress();
         if (isNotEmpty(declaredAddress) && !Objects.equals(existCustomer.getDeclaredAddress(), declaredAddress)) {
             existCustomer.setDeclaredAddress(declaredAddress);
             log.debug("customer declaredAddress changed from {} to {}", existCustomer.getDeclaredAddress(), declaredAddress);
         }
+
+        final String actualAddress = customerDto.getActualAddress();
         if (isNotEmpty(actualAddress) && !Objects.equals(existCustomer.getActualAddress(), actualAddress)) {
             existCustomer.setActualAddress(actualAddress);
             log.debug("customer actualAddress changed from {} to {}", existCustomer.getActualAddress(), actualAddress);
         }
+
+        final String email = customerDto.getEmail();
         if (isNotEmpty(email) && !Objects.equals(existCustomer.getEmail(), email)) {
             existCustomer.setEmail(email);
             log.debug("customer email changed from {} to {}", existCustomer.getEmail(), email);
         }
+
+        final String phone = customerDto.getPhone();
         if (isNotEmpty(phone) && !Objects.equals(existCustomer.getPhone(), phone)) {
             existCustomer.setPhone(phone);
             log.debug("customer phone changed from {} to {}", existCustomer.getPhone(), phone);
         }
+    }
+
+    @Override
+    public CustomerDto findCustomerByName(String name) {
+        return null;
+    }
+
+    @Override
+    public List<CustomerDto> findCustomerByPerson(PersonDto personDto) {
+        return null;
     }
 }
