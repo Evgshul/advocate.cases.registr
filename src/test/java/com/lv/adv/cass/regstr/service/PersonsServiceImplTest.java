@@ -2,8 +2,8 @@ package com.lv.adv.cass.regstr.service;
 
 
 import com.lv.adv.cass.regstr.dto.PersonDto;
-import com.lv.adv.cass.regstr.dto.PersonMapper;
-import com.lv.adv.cass.regstr.dto.PersonMapperImpl;
+import com.lv.adv.cass.regstr.dto.mapper.PersonMapper;
+import com.lv.adv.cass.regstr.dto.impl.PersonMapperImpl;
 import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,8 +38,7 @@ class PersonsServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
-        PersonMapper personMapper = new PersonMapperImpl(personRepository, mapper);
+        PersonMapper personMapper = new PersonMapperImpl(mapper);
         underTest = new PersonsServiceImpl(personRepository, personMapper);
     }
 

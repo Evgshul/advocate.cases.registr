@@ -4,6 +4,7 @@ import com.lv.adv.cass.regstr.dto.PersonDto;
 import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.PersonRepository;
 import com.lv.adv.cass.regstr.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.validation.Valid;
 
 import java.util.UUID;
 

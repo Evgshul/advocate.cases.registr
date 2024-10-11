@@ -1,5 +1,6 @@
-package com.lv.adv.cass.regstr.dto;
+package com.lv.adv.cass.regstr.dto.mapper;
 
+import com.lv.adv.cass.regstr.dto.PersonDto;
 import com.lv.adv.cass.regstr.model.Person;
 
 

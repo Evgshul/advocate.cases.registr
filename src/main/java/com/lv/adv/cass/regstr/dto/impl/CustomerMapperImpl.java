@@ -1,12 +1,14 @@
-package com.lv.adv.cass.regstr.dto;
+package com.lv.adv.cass.regstr.dto.impl;
 
+import com.lv.adv.cass.regstr.dto.CustomerDto;
+import com.lv.adv.cass.regstr.dto.mapper.CustomerMapper;
 import com.lv.adv.cass.regstr.model.Customer;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomerMapperImpl implements CustomerMapper{
+public class CustomerMapperImpl implements CustomerMapper {
 
     private final ModelMapper mapper;
 

@@ -1,5 +1,7 @@
-package com.lv.adv.cass.regstr.dto;
+package com.lv.adv.cass.regstr.dto.impl;
 
+import com.lv.adv.cass.regstr.dto.PersonDto;
+import com.lv.adv.cass.regstr.dto.mapper.PersonMapper;
 import com.lv.adv.cass.regstr.model.Person;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

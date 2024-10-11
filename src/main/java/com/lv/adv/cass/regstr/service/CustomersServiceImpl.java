@@ -1,7 +1,7 @@
 package com.lv.adv.cass.regstr.service;
 
 import com.lv.adv.cass.regstr.dto.CustomerDto;
-import com.lv.adv.cass.regstr.dto.CustomerMapper;
+import com.lv.adv.cass.regstr.dto.mapper.CustomerMapper;
 import com.lv.adv.cass.regstr.dto.PersonDto;
 import com.lv.adv.cass.regstr.model.Customer;
 import com.lv.adv.cass.regstr.repository.CustomersRepository;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
