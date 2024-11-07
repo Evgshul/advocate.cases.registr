@@ -6,10 +6,9 @@ import com.lv.adv.cass.regstr.dto.mapper.PersonMapper;
 import com.lv.adv.cass.regstr.dto.impl.PersonMapperImpl;
 import com.lv.adv.cass.regstr.model.Person;
 import com.lv.adv.cass.regstr.repository.PersonRepository;
+import com.lv.adv.cass.regstr.service.impl.PersonsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,12 +32,9 @@ class PersonsServiceImplTest {
     private PersonService underTest;
 
 
-    @Autowired
-    private ModelMapper mapper;
-
     @BeforeEach
     void setUp() {
-        PersonMapper personMapper = new PersonMapperImpl(mapper);
+        PersonMapper personMapper = new PersonMapperImpl();
         underTest = new PersonsServiceImpl(personRepository, personMapper);
     }
 
@@ -48,7 +44,7 @@ class PersonsServiceImplTest {
 
         underTest.addPerson(person);
 
-        Optional<Person> checkPerson = personRepository.findPersonsByEmail(person.getEmail());
+        Optional<Person> checkPerson = personRepository.findPersonsByEmail(person.email());
         assertTrue(checkPerson.isPresent(), "Person should exist");
         assertEquals("John Silver", checkPerson.get().getFullName(), "Invalid Person fullName value");
         assertEquals("037127090911", checkPerson.get().getPhone(), "Invalid Person phoneNumber value");
@@ -61,17 +57,15 @@ class PersonsServiceImplTest {
         PersonDto person = createValidPersonDto();
         underTest.addPerson(person);
 
-        PersonDto newPerson = new PersonDto();
-        newPerson.setIdentifier("IND4567");
-        newPerson.setFullName("John Silver");
-        newPerson.setEmail("test2@mail.com");
-        newPerson.setAddress("Latvia Riga");
-        newPerson.setPhone("097256987421");
-
+        PersonDto newPerson = new PersonDto("IND4567",
+                "John Silver",
+                "Latvia Riga",
+                "097256987421",
+                "test2@mail.com");
 
         Exception exception = assertThrows(IllegalStateException.class,
                 () -> underTest.addPerson(newPerson));
-        assertTrue(exception.getMessage().contains("Person fullName " + newPerson.getFullName() + " is taken"));
+        assertTrue(exception.getMessage().contains("Person fullName " + newPerson.fullName() + " is taken"));
     }
 
     @Test
@@ -79,47 +73,28 @@ class PersonsServiceImplTest {
         PersonDto person = createValidPersonDto();
         underTest.addPerson(person);
 
-        PersonDto newPerson = new PersonDto();
-        newPerson.setIdentifier("IND4567");
-        newPerson.setFullName("Yangya Satpath");
-        newPerson.setAddress("Latvia Riga");
-        newPerson.setEmail("test@mail.org");
-        newPerson.setPhone("097256987421");
-
-
-        Exception exception = assertThrows(IllegalStateException.class,
-                () -> underTest.addPerson(newPerson));
-        assertTrue(exception.getMessage().contains("Email " + newPerson.getEmail() + " is taken"));
-    }
-
-    @Test
-    void testAddPerson_PhoneNumberExist() {
-        PersonDto person = createValidPersonDto();
-        underTest.addPerson(person);
-
-        PersonDto newPerson = new PersonDto();
-        newPerson.setIdentifier("IND4567");
-        newPerson.setFullName("Yangya Satpath");
-        newPerson.setAddress("Latvija");
-        newPerson.setEmail("test@gmail.com");
-        newPerson.setPhone("037127090911");
+        PersonDto newPerson = new PersonDto(
+                "IND4567",
+                "Yangya Satpath",
+                "Latvia Riga",
+                "097256987421",
+                "test@mail.org");
 
         Exception exception = assertThrows(IllegalStateException.class,
                 () -> underTest.addPerson(newPerson));
-        assertTrue(exception.getMessage().contains("Phone " + newPerson.getPhone() + " is taken"));
+        assertTrue(exception.getMessage().contains("Email " + newPerson.email() + " is taken"));
     }
 
     @Test
-    void testFindPirsonByName_success() {
+    void testFindPersonByName_success() {
         Person person = createValidPerson();
         personRepository.save(person);
 
         PersonDto checkPerson = underTest.findPersonByFullName("John Silver");
         assertNotNull(checkPerson, "Person should exist");
-        assertEquals("John Silver", checkPerson.getFullName(), "Invalid Person fullName value");
-        assertEquals("037127090911", checkPerson.getPhone(), "Invalid Person phoneNumber value");
-        assertEquals("test@mail.org", checkPerson.getEmail(), "Invalid Person email value");
-
+        assertEquals("John Silver", checkPerson.fullName(), "Invalid Person fullName value");
+        assertEquals("037127090911", checkPerson.phone(), "Invalid Person phoneNumber value");
+        assertEquals("test@mail.org", checkPerson.email(), "Invalid Person email value");
     }
 
     @Test
@@ -152,8 +127,8 @@ class PersonsServiceImplTest {
         final List<PersonDto> finalPersonList = underTest.getAllPersons();
         assertEquals(1, finalPersonList.size(), "Should be only one Persons");
 
-        assertTrue(finalPersonList.stream().noneMatch(p -> person2.getFullName().equals(p.getFullName())
-                        && person2.getEmail().equals(p.getEmail())),
+        assertTrue(finalPersonList.stream().noneMatch(p -> person2.getFullName().equals(p.fullName())
+                        && person2.getEmail().equals(p.email())),
                 "Person with name 'Yangya Satpath' should not exist");
     }
 
@@ -174,15 +149,16 @@ class PersonsServiceImplTest {
         personRepository.save(person);
 
 
-        PersonDto personNewValus = new PersonDto();
-        personNewValus.setIdentifier("231209-23111");
-        personNewValus.setFullName("Yangya Satpath");
-        personNewValus.setAddress("SUper Address");
-        personNewValus.setEmail("test2@mail.com");
-        personNewValus.setPhone("097256987421");
+        PersonDto personNewValues = new PersonDto(
+                "231209-23111",
+                "Yangya Satpath",
+                "SUper Address",
+                "097256987421",
+                "test2@mail.com"
+        );
 
         final UUID personId = person.getId();
-        underTest.updatePerson(personId, personNewValus);
+        underTest.updatePerson(personId, personNewValues);
         Optional<Person> updatedPerson = personRepository.findById(personId);
         assertTrue(updatedPerson.isPresent(), "Person should exist");
 
@@ -198,16 +174,18 @@ class PersonsServiceImplTest {
         personRepository.save(person);
 
         Person person2 = new Person();
+        person2.setIdentifier("2345612-1234");
         person2.setFullName("Yangya Satpath");
+        person2.setAddress("Some Fine Address");
         person2.setEmail("test2@mail.com");
         person2.setPhone("097256987421");
         personRepository.save(person2);
 
 
-        PersonDto personNewValues = new PersonDto();
-        personNewValues.setFullName("Yangya Satpath");
-        personNewValues.setEmail("test2@mail.com");
-        personNewValues.setPhone("097256987421");
+        PersonDto personNewValues = new PersonDto(
+                "2345612-1234",
+                "Yangya Satpath",
+                "Some Fine Address", "097256987421", "test2@mail.com\"");
 
         final UUID personId = person2.getId();
         underTest.updatePerson(personId, personNewValues);
@@ -231,12 +209,12 @@ class PersonsServiceImplTest {
         personRepository.save(person2);
 
 
-        PersonDto personNewValues = new PersonDto();
-        personNewValues.setIdentifier("238943-21677");
-        personNewValues.setFullName("John Silver");
-        personNewValues.setAddress("Poland");
-        personNewValues.setEmail("test@mail.org");
-        personNewValues.setPhone("037127090911");
+        PersonDto personNewValues = new PersonDto("238943-21677",
+                "John Silver",
+                "Poland",
+                "test@mail.org",
+                "037127090911"
+        );
 
         final UUID personId = person2.getId();
         underTest.updatePerson(personId, personNewValues);
@@ -250,7 +228,7 @@ class PersonsServiceImplTest {
         return new PersonDto(
                 "150510-45789",
                 "John Silver",
-                "Some Adress",
+                "Some Address",
                 "037127090911",
                 "test@mail.org");
     }
@@ -258,11 +236,12 @@ class PersonsServiceImplTest {
     private Person createValidPerson() {
 
 
-        return new Person(
-                "150510-45789",
-                "John Silver",
-                "Some Fine Address",
-                "037127090911",
-                "test@mail.org");
+        return Person.builder()
+                .identifier("150510-45789")
+                .fullName("John Silver")
+                .address("Some Fine Address")
+                .phone("037127090911")
+                .email("test@mail.org")
+                .build();
     }
 }

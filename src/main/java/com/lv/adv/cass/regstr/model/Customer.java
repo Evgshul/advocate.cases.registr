@@ -1,18 +1,15 @@
 package com.lv.adv.cass.regstr.model;
 
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
@@ -21,38 +18,39 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "customer")
+@Table(name = "customers")
 public class Customer {
 
     @Id
     @GeneratedValue
-    @Column(name = "customer_id")
     private UUID customerId;
 
-    @Column(name = "identifier")
-    @NotNull(message = "identifier is required")
-    private String identifier;
+    @Column(nullable = false)
+    private boolean isCompany;
 
-    @Column(name = "customer_name")
-    @NotNull(message = "name is required")
-    private String customerName;
+    @Column(name = "company_name")
+    private String companyName;
 
-    @Column(name = "declared_address")
+    @Column(name = "registration_number", unique = true)
+    private String registrationNumber;
+
+    @OneToOne
+    @JoinColumn(name = "person_id")
+    private Person person;
+
+    @Column
     @NotNull(message = "Declared address is required")
     private String declaredAddress;
 
     @Column(name = "actual_address")
     private String actualAddress;
 
-    @Column(name = "phone")
     private String phone;
 
-    @Column(name = "email")
     private String email;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "person_id", nullable = false)
-    private Person person;
+    @OneToOne
+    @JoinColumn(name = "representative_id")
+    private Person representative;
 }
 

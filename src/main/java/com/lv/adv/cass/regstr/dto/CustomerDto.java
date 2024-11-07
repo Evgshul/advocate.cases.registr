@@ -1,5 +1,6 @@
 package com.lv.adv.cass.regstr.dto;
 
+import com.lv.adv.cass.regstr.model.Person;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,11 +9,13 @@ import lombok.Setter;
 @Setter
 public class CustomerDto {
 
-    private String identifier;
+    private String isCompany;
+
+    private String companyName;
+
+    private String registrationNumber;
 
     private PersonDto personDto;
-
-    private String customerName;
 
     private String declaredAddress;
 
@@ -22,5 +25,5 @@ public class CustomerDto {
 
     private String email;
 
-    private String person;
+    private Person representative;
 }
