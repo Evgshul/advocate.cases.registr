@@ -8,11 +8,11 @@ import java.util.UUID;
 
 public interface PersonService {
 
-    // get list of all persons
+    // get a list of all persons
     List<PersonDto> getAllPersons();
 
     // method to add new person
-    Person addPerson(PersonDto personsDto);
+    void addPerson(PersonDto personsDto);
 
     // method to find person by fullName
     PersonDto findPersonByFullName(String fullName);

@@ -2,7 +2,6 @@ package com.lv.adv.cass.regstr.service.impl;
 
 import com.lv.adv.cass.regstr.dto.CustomerDto;
 import com.lv.adv.cass.regstr.dto.mapper.CustomerMapper;
-import com.lv.adv.cass.regstr.dto.PersonDto;
 import com.lv.adv.cass.regstr.model.Customer;
 import com.lv.adv.cass.regstr.repository.CustomersRepository;
 import com.lv.adv.cass.regstr.service.CustomersService;
@@ -12,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import java.util.List;
+import java.util.UUID;
+
+import static com.lv.adv.cass.regstr.constants.MessageConstants.IS_NOT_PRESENT;
 
 @Service
 public class CustomersServiceImpl implements CustomersService {
@@ -39,19 +36,19 @@ public class CustomersServiceImpl implements CustomersService {
     @Override
     public List<CustomerDto> getAllCustomers() {
         return customersRepository.findAll().stream()
-                .map(this.customerMapper::customerToCustomerDto).toList();
+                .map(this.customerMapper::customerToCustomerDto)
+                .toList();
     }
 
     @Override
     @Transactional
     public void addNewCustomer(CustomerDto customerDto) {
-        Optional<Customer> customerByIdentifier = customersRepository.findByRegistrationNumber(customerDto.getRegistrationNumber());
-        if (customerByIdentifier.isPresent()) {
-            throw new IllegalStateException("customers exist");
-        }
+        customersRepository.findByRegistrationNumber(customerDto.getRegistrationNumber())
+                .ifPresent(customer -> {
+                    throw new IllegalStateException("customers exist");
+                });
 
-        Customer customer = customerMapper.customerDtoToCustomer(customerDto);
-        customersRepository.save(customer);
+        customersRepository.save(customerMapper.customerDtoToCustomer(customerDto));
         log.debug("new customers name {}; identifier {}", customerDto.getCompanyName(), customerDto.getRegistrationNumber());
     }
 
@@ -65,23 +62,40 @@ public class CustomersServiceImpl implements CustomersService {
     }
 
     @Override
-    public CustomerDto findCustomerByName(String name) {
+    public CustomerDto findByDeclaredAddress(String declaredAddress) {
+        return customersRepository.findByDeclaredAddress(declaredAddress)
+                .map(customerMapper::customerToCustomerDto)
+                .orElseThrow(() -> new IllegalStateException("Declared address: ".concat(declaredAddress).concat(IS_NOT_PRESENT)));
+    }
+
+    @Override
+    public CustomerDto findByActualAddress(String actualAddress) {
+        return customersRepository.findByActualAddress(actualAddress)
+                .map(customerMapper::customerToCustomerDto)
+                .orElseThrow(() -> new IllegalStateException("Actual address: ".concat(actualAddress).concat(IS_NOT_PRESENT)));
+    }
+
+    @Override
+    public CustomerDto findByPerson(UUID personId) {
         return null;
     }
 
     @Override
-    public CustomerDto findCustomerByRegistrationNumber(String registrationNumber) {
-        return null;
-    }
-
-    @Override
-    public List<CustomerDto> findCustomerByPerson(PersonDto personDto) {
-        return null;
+    public List<CustomerDto> findCustomers(String companyName,
+                                           String registrationNumber,
+                                           String phone,
+                                           String email,
+                                           String personIdentifier,
+                                           String representativeIdentifier) {
+        return customersRepository.searchCustomers(companyName, registrationNumber, phone, email,personIdentifier, representativeIdentifier)
+                .stream()
+                .map(customerMapper::customerToCustomerDto)
+                .toList();
     }
 
     @Transactional
     @Override
-    public void updateCustomer(UUID customerId, CustomerDto customerDto) {
+    public Customer updateCustomer(UUID customerId, CustomerDto customerDto) {
         Customer existCustomer = customersRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalStateException(
                         "can not find customer with id: ".concat(customerId.toString())
@@ -121,6 +135,7 @@ public class CustomersServiceImpl implements CustomersService {
 //            existCustomer.setPhone(phone);
 //            log.debug("customer phone changed from {} to {}", existCustomer.getPhone(), phone);
 //        }
+        return new Customer();
     }
 
 }

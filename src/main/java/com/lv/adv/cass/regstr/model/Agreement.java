@@ -2,6 +2,8 @@ package com.lv.adv.cass.regstr.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -29,8 +31,13 @@ public class Agreement {
     @Column(nullable = false, unique = true)
     private String number;
 
-    @Column(nullable = false)
-    private String format;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "agreement_form", nullable = false)
+    private AgreementForm agreementForm;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "agreement_type", nullable = false)
+    private AgreementType agreementType;
 
     @Column(name = "is_state_provided", nullable = false)
     private boolean isStateProvided;

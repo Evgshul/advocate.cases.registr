@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum DocumentForm {
+public enum AgreementForm {
     WRITTEN("written"),
     ORAL("oral");
 

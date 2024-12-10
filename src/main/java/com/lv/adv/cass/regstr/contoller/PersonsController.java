@@ -21,10 +21,15 @@ import java.util.UUID;
 @Controller
 public class PersonsController {
 
-    @Autowired
-    private PersonService personsService;
+
+    private final PersonService personsService;
 
     private PersonRepository personsRepository;
+
+    @Autowired
+    public PersonsController(PersonService personsService) {
+        this.personsService = personsService;
+    }
 
     @GetMapping("/")
     public String personsList(Model model) {

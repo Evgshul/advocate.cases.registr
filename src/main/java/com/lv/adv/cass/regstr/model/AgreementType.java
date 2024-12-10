@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum DocumentType {
+public enum AgreementType {
     AGREEMENT("Agreement"),
     CONTRACT("Contract");
 

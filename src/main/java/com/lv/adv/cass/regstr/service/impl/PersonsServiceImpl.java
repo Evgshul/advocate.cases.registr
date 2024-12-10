@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,7 @@ public class PersonsServiceImpl implements PersonService {
     }
 
     /**
-     * Method provide list of all person
+     * Method provide a list of all persons
      *
      * @return list of persons
      */
@@ -50,7 +49,7 @@ public class PersonsServiceImpl implements PersonService {
      * Method to add new entry in table persons
      */
     @Override
-    public Person addPerson(PersonDto personsDto) {
+    public void addPerson(PersonDto personsDto) {
 
         if (isIdentifierExist(personsDto.identifier())) {
             throw new IllegalStateException(constructExceptionMessage("person Identifier ",personsDto.identifier()));
@@ -63,20 +62,19 @@ public class PersonsServiceImpl implements PersonService {
         if (isEmailExist(personsDto.email())) {
             throw new IllegalStateException(constructExceptionMessage("Email ", personsDto.email()));
         }
-
-        return personRepository.save(personMapper.personDtoToPerson(personsDto));
+        personRepository.save(personMapper.personDtoToPerson(personsDto));
     }
 
     @Override
     public PersonDto findPersonByFullName(String fullName) {
-        return this.personRepository.findByFullName(fullName)
+        return personRepository.findByFullName(fullName)
                 .map(personMapper::personToPersonDto)
                 .orElseThrow(() -> new IllegalStateException("Fullname ".concat(fullName).concat(IS_NOT_PRESENT)));
     }
 
     @Override
     public PersonDto findPersonByEmail(String email) {
-        return this.personRepository.findPersonsByEmail(email)
+        return personRepository.findPersonsByEmail(email)
                 .map(personMapper::personToPersonDto).orElseThrow(
                         () -> new IllegalStateException("Email ".concat(email).concat(IS_NOT_PRESENT))
                 );
@@ -96,7 +94,6 @@ public class PersonsServiceImpl implements PersonService {
      * @param personId unique identifier of entry in entity persons
      */
     @Override
-    @Transactional
     public void deletePerson(UUID personId) {
         personRepository.findById(personId)
                 .ifPresentOrElse(person -> personRepository.deleteById(personId),
@@ -112,7 +109,6 @@ public class PersonsServiceImpl implements PersonService {
      *
      * @param personId Id
      */
-    @Transactional
     @Override
     public Person updatePerson(final UUID personId, final PersonDto personsDto) {
         Person existPerson = personRepository.findById(personId)
@@ -134,7 +130,7 @@ public class PersonsServiceImpl implements PersonService {
         final String fullName = personsDto.fullName();
         if (!Objects.equals(existPerson.getFullName(), fullName) && !isFullnameExist(fullName)) {
             existPerson.setFullName(fullName);
-            LOG.debug("Person fullNmae updated to {}", fullName);
+            LOG.debug("Person fullName updated to {}", fullName);
         }
 
         final String address = personsDto.address();

@@ -2,8 +2,10 @@ package com.lv.adv.cass.regstr.service;
 
 import com.lv.adv.cass.regstr.dto.CustomerDto;
 import com.lv.adv.cass.regstr.dto.PersonDto;
+import com.lv.adv.cass.regstr.model.Customer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomersService {
@@ -14,11 +16,11 @@ public interface CustomersService {
 
     void deleteCustomer(UUID customerId);
 
-    void updateCustomer(UUID customerId, CustomerDto customerDto);
+    Customer updateCustomer(UUID customerId, CustomerDto customerDto);
 
-    CustomerDto findCustomerByName(String name);
+    CustomerDto findByDeclaredAddress(String declaredAddress);
+    CustomerDto findByActualAddress(String actualAddress);
+    CustomerDto findByPerson(UUID personId);
+    List<CustomerDto> findCustomers(String companyName, String registrationNumber, String phone, String email, String personIdentifier, String representativeIdentifier);
 
-    CustomerDto findCustomerByRegistrationNumber(String registrationNumber);
-
-    List<CustomerDto> findCustomerByPerson(PersonDto personDto);
 }
