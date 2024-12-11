@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -49,6 +50,7 @@ public class PersonsServiceImpl implements PersonService {
      * Method to add new entry in table persons
      */
     @Override
+    @Transactional
     public void addPerson(PersonDto personsDto) {
 
         if (isIdentifierExist(personsDto.identifier())) {
@@ -94,6 +96,7 @@ public class PersonsServiceImpl implements PersonService {
      * @param personId unique identifier of entry in entity persons
      */
     @Override
+    @Transactional
     public void deletePerson(UUID personId) {
         personRepository.findById(personId)
                 .ifPresentOrElse(person -> personRepository.deleteById(personId),
@@ -110,6 +113,7 @@ public class PersonsServiceImpl implements PersonService {
      * @param personId Id
      */
     @Override
+    @Transactional
     public Person updatePerson(final UUID personId, final PersonDto personsDto) {
         Person existPerson = personRepository.findById(personId)
                 .orElseThrow(() -> new IllegalStateException(

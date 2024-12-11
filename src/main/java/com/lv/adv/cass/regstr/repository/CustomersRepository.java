@@ -13,6 +13,7 @@ import java.util.UUID;
 @Repository
 public interface CustomersRepository extends JpaRepository<Customer, UUID> {
 
+    Optional<Customer> findCustomerByCompanyName(String companyName);
     Optional<Customer> findByRegistrationNumber(String registrationNumber);
     Optional<Customer> findByDeclaredAddress(String declaredAddress);
     Optional<Customer> findByActualAddress(String actualAddress);
@@ -20,29 +21,18 @@ public interface CustomersRepository extends JpaRepository<Customer, UUID> {
 
     /**
      * Global search by all params, exclude address
-     * @param companyName Company name
-     * @param registrationNumber registration ID
-     * @param phone phone number
-     * @param email company email
-     * @param personIdentifier ..
-     * @param representativeIdentifier ..
-     * @return List of Customers according to search criteria
+     * @param keyword for search in Customers
      */
     @Query("SELECT c from Customer c " +
             "LEFT JOIN c.person p " +
             "LEFT JOIN c.representative r " +
-            "WHERE (:companyName IS NULL OR LOWER(c.companyName) LIKE LOWER(concat('%', :companyName, '%'))) " +
-            "AND (:registrationNumber IS NULL OR LOWER(c.registrationNumber) LIKE LOWER(concat('%', :registrationNumber, '%'))) " +
-            "AND (:phone IS null OR c.phone LIKE concat('%', :phone, '%')) " +
-            "and (:email IS NULL OR c.email like concat('%', :email, '%')) " +
-            "and (:personIdentifier IS NULL OR p.identifier like concat('%', :identifier, '%')) " +
-            "and (:representativeIdentifier IS NULL OR r.identifier LIKE CONCAT('%', :representativeIdentifier, '%'))")
+            "WHERE (:companyName IS NULL OR LOWER(c.companyName) LIKE LOWER(concat('%', :keyword, '%'))) " +
+            "AND (:registrationNumber IS NULL OR LOWER(c.registrationNumber) LIKE LOWER(concat('%', :keyword, '%'))) " +
+            "AND (:phone IS null OR c.phone LIKE concat('%', :keyword, '%')) " +
+            "and (:email IS NULL OR c.email like concat('%', :keyword, '%')) " +
+            "and (:personIdentifier IS NULL OR p.identifier like concat('%', :keyword, '%')) " +
+            "and (:representativeIdentifier IS NULL OR r.identifier LIKE CONCAT('%', :keyword, '%'))")
     List<Customer> searchCustomers(
-            @Param("companyName") String companyName,
-            @Param("registrationNumber") String registrationNumber,
-            @Param("phone") String phone,
-            @Param("email") String email,
-            @Param("personIdentifier") String personIdentifier,
-            @Param("representativeIdentifier") String representativeIdentifier);
+            @Param("keyword") String keyword);
 
 }
